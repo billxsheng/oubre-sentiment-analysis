@@ -1,0 +1,15 @@
+/streaming-analytics-producer/src/main/java/keys
+/streaming-analytics-producer/.idea
+/streaming-analytics-producer/target
+/streaming-analytics-producer/.classpath
+/streaming-analytics-producer/.project
+/streaming-analytics-producer/.settings
+/streaming-analytics-producer/twitter-streaming-analytics.iml
+
+/streaming-analytics-consumer/.idea
+/streaming-analytics-consumer/target
+/streaming-analytics-consumer/dependency-reduced-pom.xml
+/streaming-analytics-consumer/streaming-analytics-consumer.iml
+/streaming-analytics-consumer/.classpath
+/streaming-analytics-consumer/.project
+/streaming-analytics-consumer/.settings
