@@ -13,3 +13,7 @@
 /streaming-analytics-consumer/.classpath
 /streaming-analytics-consumer/.project
 /streaming-analytics-consumer/.settings
+/streaming-analytics-consumer/spark-streaming.iml
+
+
+/streaming-analytics-consumer-scala

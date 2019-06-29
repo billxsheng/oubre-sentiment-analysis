@@ -5,15 +5,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import models.Tweet;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.SparkConf;
 import org.apache.spark.streaming.Durations;
+import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaInputDStream;
+import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka010.ConsumerStrategies;
 import org.apache.spark.streaming.kafka010.KafkaUtils;
 import org.apache.spark.streaming.kafka010.LocationStrategies;
+import twitter4j.Status;
 
 public class SparkKafkaConnect {
     public static void connectToTopic() throws InterruptedException {
@@ -31,15 +35,26 @@ public class SparkKafkaConnect {
         kafkaParams.put("enable.auto.commit", false);
         Collection<String> topics = Arrays.asList("bill-test");
 
-        JavaInputDStream<ConsumerRecord<String, String>> tweets =
+        JavaInputDStream<ConsumerRecord<String, String>> tweetStream =
                 KafkaUtils.createDirectStream(
                         streamingContext,
                         LocationStrategies.PreferConsistent(),
                         ConsumerStrategies.<String, String> Subscribe(topics, kafkaParams));
 
+//        JavaDStream<String> tweets = tweetStream.map(tweet -> tweet.value());
 
+        JavaDStream<Tweet> tweets = tweetStream.map(status -> buildNewTweet(status));
+//        tweets.foreachRDD(rdd -> {
+//            for(String r: rdd.collect()) {
+//                System.out.println("*" + r);
+//            }
+//        });
 
         streamingContext.start();
         streamingContext.awaitTermination();
+    }
+
+    public static Tweet buildNewTweet(Status status) {
+
     }
 }
