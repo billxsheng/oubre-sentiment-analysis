@@ -48,8 +48,8 @@ public class SparkKafkaConnect {
             return record.value();
         }).print();
 
-        tweetStream.foreachRDD(
-                javaRdd -> {
+//        tweetStream.foreachRDD(
+//                javaRdd -> {
 //                    Map<String, Integer> wordCountMap = javaRdd.collectAsMap();
 //                    for (String key : wordCountMap.keySet()) {
 //                        List<Word> wordList = Arrays.asList(new Word(key, wordCountMap.get(key)));
@@ -57,15 +57,15 @@ public class SparkKafkaConnect {
 //                        javaFunctions(rdd).writerBuilder(
 //                                "vocabulary", "words", mapToRow(Word.class)).saveToCassandra();
 //                    }
-                }
-        );
+//                }
+//        );
 
-//        JavaDStream<String> tweets = tweetStream.map(tweet -> tweet.value());
-//        tweets.foreachRDD(rdd -> {
-//            for(String r: rdd.collect()) {
-//                System.out.println("*" + r);
-//            }
-//        });
+        JavaDStream<String> tweets = tweetStream.map(tweet -> tweet.value());
+        tweets.foreachRDD(rdd -> {
+            for(String r: rdd.collect()) {
+                System.out.println("*" + r);
+            }
+        });
 
         streamingContext.start();
         streamingContext.awaitTermination();
