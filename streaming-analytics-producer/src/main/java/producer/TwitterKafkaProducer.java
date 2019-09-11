@@ -64,11 +64,20 @@ public class TwitterKafkaProducer {
     public void run() {
         client.connect();
         try (Producer<Long, String> producer = getProducer()) {
+//            while (true) {
+//                Tweet tweet = gson.fromJson(queue.take(), Tweet.class);
+//                System.out.printf("Fetched tweet id %d\n", tweet.getId());
+//                long key = tweet.getId();
+//                String msg = tweet.toString();
+//                ProducerRecord<Long, String> record = new ProducerRecord<>(KafkaConfiguration.TOPIC, key, msg);
+//                producer.send(record, callback);
+//            }
             while (true) {
                 Tweet tweet = gson.fromJson(queue.take(), Tweet.class);
                 System.out.printf("Fetched tweet id %d\n", tweet.getId());
                 long key = tweet.getId();
-                String msg = tweet.toString();
+                String msg = gson.toJson(tweet);
+                System.out.println(msg);
                 ProducerRecord<Long, String> record = new ProducerRecord<>(KafkaConfiguration.TOPIC, key, msg);
                 producer.send(record, callback);
             }

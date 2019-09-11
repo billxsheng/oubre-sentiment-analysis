@@ -11,6 +11,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.*;
@@ -22,9 +23,8 @@ import twitter4j.Status;
 
 public class SparkKafkaConnect {
     public static void connectToTopic() throws InterruptedException {
-        SparkSession spark = SparkSession.builder().getOrCreate();
+//        SparkSession spark = SparkSession.builder().appName("Twitter Sentiment Analysis").config("spark.master", "local").getOrCreate();
         SparkConf sparkConf = new SparkConf().setAppName("spark-streaming").setMaster("local[2]").set("spark.executor.memory","1g");
-        sparkConf.setAppName("WordCountingApp");
         sparkConf.set("spark.cassandra.connection.host", "127.0.0.1");
         JavaStreamingContext streamingContext = new JavaStreamingContext(sparkConf, Durations.seconds(1));
 
@@ -43,6 +43,15 @@ public class SparkKafkaConnect {
                         LocationStrategies.PreferConsistent(),
                         ConsumerStrategies.<String, String> Subscribe(topics, kafkaParams));
 
+
+        final JavaInputDStream<ConsumerRecord<String, String>> stream =
+                KafkaUtils.createDirectStream(
+                        streamingContext,
+                        LocationStrategies.PreferConsistent(),
+                        ConsumerStrategies.<String, String>Subscribe(topics, kafkaParams)
+                );
+
+
         tweetStream.map(record -> {
             System.out.println("fdsafdsa");
             return record.value();
@@ -60,12 +69,12 @@ public class SparkKafkaConnect {
 //                }
 //        );
 
-        JavaDStream<String> tweets = tweetStream.map(tweet -> tweet.value());
-        tweets.foreachRDD(rdd -> {
-            for(String r: rdd.collect()) {
-                System.out.println("*" + r);
-            }
-        });
+//        JavaDStream<String> tweets = tweetStream.map(tweet -> tweet.value());
+//        tweets.foreachRDD(rdd -> {
+//            for(String r: rdd.collect()) {
+//                System.out.println("*" + r);
+//            }
+//        });
 
         streamingContext.start();
         streamingContext.awaitTermination();
