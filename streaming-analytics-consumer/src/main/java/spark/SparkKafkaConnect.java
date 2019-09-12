@@ -5,28 +5,28 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gson.Gson;
 import models.Tweet;
-import org.apache.commons.codec.StringDecoder;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.PairFunction;
-import org.apache.spark.sql.SparkSession;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.*;
 import org.apache.spark.streaming.kafka010.ConsumerStrategies;
 import org.apache.spark.streaming.kafka010.KafkaUtils;
 import org.apache.spark.streaming.kafka010.LocationStrategies;
-import scala.Tuple2;
-import twitter4j.Status;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 public class SparkKafkaConnect {
+
+    public static final String TARGET_STRING = "@lebron";
+
     public static void connectToTopic() throws InterruptedException {
-//        SparkSession spark = SparkSession.builder().appName("Twitter Sentiment Analysis").config("spark.master", "local").getOrCreate();
         SparkConf sparkConf = new SparkConf().setAppName("spark-streaming").setMaster("local[2]").set("spark.executor.memory","1g");
         sparkConf.set("spark.cassandra.connection.host", "127.0.0.1");
         JavaStreamingContext streamingContext = new JavaStreamingContext(sparkConf, Durations.seconds(1));
+        Gson g = new Gson();
 
         Map<String, Object> kafkaParams = new HashMap<>();
         kafkaParams.put("bootstrap.servers", "localhost:9092");
@@ -43,40 +43,22 @@ public class SparkKafkaConnect {
                         LocationStrategies.PreferConsistent(),
                         ConsumerStrategies.<String, String> Subscribe(topics, kafkaParams));
 
-
-        final JavaInputDStream<ConsumerRecord<String, String>> stream =
-                KafkaUtils.createDirectStream(
-                        streamingContext,
-                        LocationStrategies.PreferConsistent(),
-                        ConsumerStrategies.<String, String>Subscribe(topics, kafkaParams)
-                );
-
-
         tweetStream.map(record -> {
-            System.out.println("fdsafdsa");
-            return record.value();
+            JSONObject tweetObj = (JSONObject) new JSONParser().parse(record.value());
+            JSONObject userObj = (JSONObject) tweetObj.get("user");
+            String username = userObj.get("screen_name").toString();
+            String location = userObj.get("location").toString();
+            String text = tweetObj.get("text").toString();
+            Tweet tweet = new Tweet(username, processTweet(text), location);
+            return tweet.toString();
         }).print();
 
-//        tweetStream.foreachRDD(
-//                javaRdd -> {
-//                    Map<String, Integer> wordCountMap = javaRdd.collectAsMap();
-//                    for (String key : wordCountMap.keySet()) {
-//                        List<Word> wordList = Arrays.asList(new Word(key, wordCountMap.get(key)));
-//                        JavaRDD<Word> rdd = streamingContext.sparkContext().parallelize(wordList);
-//                        javaFunctions(rdd).writerBuilder(
-//                                "vocabulary", "words", mapToRow(Word.class)).saveToCassandra();
-//                    }
-//                }
-//        );
-
-//        JavaDStream<String> tweets = tweetStream.map(tweet -> tweet.value());
-//        tweets.foreachRDD(rdd -> {
-//            for(String r: rdd.collect()) {
-//                System.out.println("*" + r);
-//            }
-//        });
 
         streamingContext.start();
         streamingContext.awaitTermination();
+    }
+
+    public static String processTweet(String text) {
+        return text.replaceAll(TARGET_STRING, "");
     }
 }
