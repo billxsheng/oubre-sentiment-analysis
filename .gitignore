@@ -6,6 +6,7 @@
 /streaming-analytics-producer/.settings
 /streaming-analytics-producer/twitter-streaming-analytics.iml
 
+/streaming-analytics-consumer/src/main/java/keys/keys.java
 /streaming-analytics-consumer/.idea
 /streaming-analytics-consumer/target
 /streaming-analytics-consumer/dependency-reduced-pom.xml

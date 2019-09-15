@@ -20,13 +20,10 @@ import org.json.simple.parser.JSONParser;
 
 public class SparkKafkaConnect {
 
-    public static final String TARGET_STRING = "@lebron";
-
     public static void connectToTopic() throws InterruptedException {
         SparkConf sparkConf = new SparkConf().setAppName("spark-streaming").setMaster("local[2]").set("spark.executor.memory","1g");
         sparkConf.set("spark.cassandra.connection.host", "127.0.0.1");
         JavaStreamingContext streamingContext = new JavaStreamingContext(sparkConf, Durations.seconds(1));
-        Gson g = new Gson();
 
         Map<String, Object> kafkaParams = new HashMap<>();
         kafkaParams.put("bootstrap.servers", "localhost:9092");
@@ -47,18 +44,16 @@ public class SparkKafkaConnect {
             JSONObject tweetObj = (JSONObject) new JSONParser().parse(record.value());
             JSONObject userObj = (JSONObject) tweetObj.get("user");
             String username = userObj.get("screen_name").toString();
-            String location = userObj.get("location").toString();
             String text = tweetObj.get("text").toString();
-            Tweet tweet = new Tweet(username, processTweet(text), location);
-            return tweet.toString();
+            Tweet tweet = new Tweet(username, Tweet.processTweet(text));
+
+            return Tweet.analyze(tweet);
+
+//            return tweet.toString();
         }).print();
 
 
         streamingContext.start();
         streamingContext.awaitTermination();
-    }
-
-    public static String processTweet(String text) {
-        return text.replaceAll(TARGET_STRING, "");
     }
 }
