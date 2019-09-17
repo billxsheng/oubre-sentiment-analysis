@@ -1,20 +1,34 @@
 package models;
 
+import com.google.gson.JsonObject;
 import com.monkeylearn.MonkeyLearn;
 import com.monkeylearn.MonkeyLearnException;
 import com.monkeylearn.MonkeyLearnResponse;
 import keys.keys;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.io.Serializable;
 
 
 public class Tweet implements Serializable {
-    public static final String TARGET_STRING = "@lebron";
+    public static final String TARGET_STRING = "";
 
 
     private String name;
     private String text;
     private String location;
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    private String data;
 
     public String getName() {
         return name;
@@ -32,9 +46,18 @@ public class Tweet implements Serializable {
         this.text = text;
     }
 
-    public Tweet(String name, String text) {
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public Tweet(String name, String text, String location) {
         this.name = name;
         this.text = text;
+        this.location = location;
     }
 
     @Override
@@ -42,6 +65,8 @@ public class Tweet implements Serializable {
         return "Tweet{" +
                 "name='" + name + '\'' +
                 ", text='" + text + '\'' +
+                ", location='" + location + '\'' +
+                ", data='" + data + '\'' +
                 '}';
     }
 
@@ -53,7 +78,20 @@ public class Tweet implements Serializable {
         MonkeyLearn ml = new MonkeyLearn(keys.ML_API_KEY);
         String modelId = "cl_pi3C7JiL";
         String[] data = {tweet.getText()};
-        MonkeyLearnResponse res = ml.classifiers.classify(modelId, data);
-        return res.arrayResult.toJSONString();
+//        String res = ml.classifiers.classify(modelId, data).arrayResult.toJSONString();
+
+        //json result doesnt work gotta come up with a different solution
+        //not sure how to get the key of positive negative 
+        JSONArray res = ml.classifiers.classify(modelId, data).arrayResult;
+        JSONObject jo = new JSONObject();
+        jo.put("res", res);
+        JSONObject tweetObj = (JSONObject) new JSONParser().parse(jo);
+        tweet.setData(jo.toString());
+//        tweet.saveTweetToDB();
+        return tweet.getData();
     }
+
+//    public void saveTweetToDB() {
+//
+//    }
 }
