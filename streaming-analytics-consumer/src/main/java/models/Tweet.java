@@ -1,20 +1,16 @@
 package models;
 
-import com.google.gson.JsonObject;
 import com.monkeylearn.MonkeyLearn;
 import com.monkeylearn.MonkeyLearnException;
-import com.monkeylearn.MonkeyLearnResponse;
 import keys.keys;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 
 
 public class Tweet implements Serializable {
     public static final String TARGET_STRING = "";
-
 
     private String name;
     private String text;
@@ -77,21 +73,27 @@ public class Tweet implements Serializable {
     public static String analyze(Tweet tweet) throws MonkeyLearnException {
         MonkeyLearn ml = new MonkeyLearn(keys.ML_API_KEY);
         String modelId = "cl_pi3C7JiL";
-        String[] data = {tweet.getText()};
-//        String res = ml.classifiers.classify(modelId, data).arrayResult.toJSONString();
+        String[] mlData = {tweet.getText()};
 
-        //json result doesnt work gotta come up with a different solution
-        //not sure how to get the key of positive negative 
-        JSONArray res = ml.classifiers.classify(modelId, data).arrayResult;
+        JSONArray res = ml.classifiers.classify(modelId, mlData).arrayResult;
         JSONObject jo = new JSONObject();
         jo.put("res", res);
-        JSONObject tweetObj = (JSONObject) new JSONParser().parse(jo);
-        tweet.setData(jo.toString());
-//        tweet.saveTweetToDB();
-        return tweet.getData();
+        String data = jo
+                .getJSONArray("res")
+                .getJSONArray(0)
+                .getJSONArray(0)
+                .getJSONObject(0)
+                .get("label")
+                .toString();
+
+        tweet.setData(data);
+
+        tweet.saveTweetToDB();
+
+        return tweet.toString();
     }
 
-//    public void saveTweetToDB() {
-//
-//    }
+    public void saveTweetToDB() {
+        
+    }
 }
