@@ -59,7 +59,10 @@ public class SparkKafkaConnect {
 
             String text = tweetObj.get("text").toString();
             Tweet tweet = new Tweet(username, Tweet.processTweet(text), location);
-            return Tweet.analyze(tweet);
+
+            Tweet.analyze(tweet);
+
+            return tweet.toString();
         }).print();
 
 

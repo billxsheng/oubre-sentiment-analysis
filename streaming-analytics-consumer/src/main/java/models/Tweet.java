@@ -3,10 +3,15 @@ package models;
 import com.monkeylearn.MonkeyLearn;
 import com.monkeylearn.MonkeyLearnException;
 import keys.keys;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoder;
+import org.apache.spark.sql.SparkSession;
 import org.json.simple.JSONArray;
 import org.json.JSONObject;
 
+import org.apache.spark.sql.Encoders;
 import java.io.Serializable;
+import java.util.Collections;
 
 
 public class Tweet implements Serializable {
@@ -94,6 +99,6 @@ public class Tweet implements Serializable {
     }
 
     public void saveTweetToDB() {
-        
+
     }
 }
