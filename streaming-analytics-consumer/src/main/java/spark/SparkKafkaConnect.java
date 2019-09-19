@@ -11,6 +11,7 @@ import models.Tweet;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.*;
@@ -48,43 +49,27 @@ public class SparkKafkaConnect {
                         LocationStrategies.PreferConsistent(),
                         ConsumerStrategies.<String, String> Subscribe(topics, kafkaParams));
 
-        tweetStream.foreachRDD(rdd -> {
-            rdd.foreach(record -> {
-                JSONObject tweetObj = (JSONObject) new JSONParser().parse(record.value());
-                JSONObject userObj = (JSONObject) tweetObj.get("user");
-                String username = userObj.get("screen_name").toString();
+        JavaDStream<Tweet> tweets = tweetStream.map(record -> {
+            JSONObject tweetObj = (JSONObject) new JSONParser().parse(record.value());
+            JSONObject userObj = (JSONObject) tweetObj.get("user");
+            String username = userObj.get("screen_name").toString();
 
-                String location = null;
-                if(userObj.containsKey("location")) {
-                    location = userObj.get("location").toString();
-                }
+            String location = null;
+            if(userObj.containsKey("location")) {
+                location = userObj.get("location").toString();
+            }
 
-                String text = tweetObj.get("text").toString();
-                Tweet tweet = new Tweet(username, Tweet.processTweet(text), location);
+            String text = tweetObj.get("text").toString();
+            Tweet tweet = new Tweet(username, Tweet.processTweet(text), location);
 
-                Tweet.analyze(tweet);
-                System.out.println(tweet.toString());
-            });
+            Tweet.analyze(tweet);
+            return tweet;
         });
 
-//        JavaDStream<Tweet> tweets = tweetStream.map(record -> {
-//            JSONObject tweetObj = (JSONObject) new JSONParser().parse(record.value());
-//            JSONObject userObj = (JSONObject) tweetObj.get("user");
-//            String username = userObj.get("screen_name").toString();
-//
-//            String location = null;
-//            if(userObj.containsKey("location")) {
-//                location = userObj.get("location").toString();
-//            }
-//
-//            String text = tweetObj.get("text").toString();
-//            Tweet tweet = new Tweet(username, Tweet.processTweet(text), location);
-//
-//            Tweet.analyze(tweet);
-//
-//        }).print();
-
-//        tweets.foreachRDD(rdd -> System.out.println(rdd));
+        tweets.foreachRDD(rdd -> {
+            javaFunctions(rdd).writerBuilder("twitter_sa", "tweets", mapToRow(Tweet.class)).saveToCassandra();
+            System.out.println("saved to db");
+        });
 
 
         streamingContext.start();
