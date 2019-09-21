@@ -9,17 +9,28 @@ import org.apache.spark.sql.SparkSession;
 import org.json.simple.JSONArray;
 import org.json.JSONObject;
 
-import org.apache.spark.sql.Encoders;
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class Tweet implements Serializable {
     public static final String TARGET_STRING = "";
 
+    private UUID id;
+    private static final AtomicInteger count = new AtomicInteger(0);
     private String name;
     private String text;
     private String location;
+    private String data;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getLocation() {
         return location;
@@ -28,8 +39,6 @@ public class Tweet implements Serializable {
     public void setLocation(String location) {
         this.location = location;
     }
-
-    private String data;
 
     public String getName() {
         return name;
@@ -59,11 +68,13 @@ public class Tweet implements Serializable {
         this.name = name;
         this.text = text;
         this.location = location;
+        this.id = UUID.randomUUID();
     }
 
     @Override
     public String toString() {
         return "Tweet{" +
+                "id='" + id + '\'' +
                 "name='" + name + '\'' +
                 ", text='" + text + '\'' +
                 ", location='" + location + '\'' +
@@ -93,12 +104,6 @@ public class Tweet implements Serializable {
 
         tweet.setData(data);
 
-        tweet.saveTweetToDB();
-
         return tweet.toString();
-    }
-
-    public void saveTweetToDB() {
-
     }
 }
