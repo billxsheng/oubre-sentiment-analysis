@@ -7,6 +7,7 @@ import java.util.Map;
 
 import static com.datastax.spark.connector.japi.CassandraJavaUtil.javaFunctions;
 import static com.datastax.spark.connector.japi.CassandraJavaUtil.mapToRow;
+
 import models.Tweet;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -24,7 +25,7 @@ import org.json.simple.parser.JSONParser;
 public class SparkKafkaConnect {
 
     public static void connectToTopic() throws InterruptedException {
-        SparkConf sparkConf = new SparkConf().setAppName("spark-streaming").setMaster("local[2]").set("spark.executor.memory","1g");
+        SparkConf sparkConf = new SparkConf().setAppName("spark-streaming").setMaster("local[2]").set("spark.executor.memory", "1g");
         sparkConf.set("spark.cassandra.connection.host", "127.0.0.1");
         JavaStreamingContext streamingContext = new JavaStreamingContext(sparkConf, Durations.seconds(1));
 
@@ -47,7 +48,7 @@ public class SparkKafkaConnect {
                 KafkaUtils.createDirectStream(
                         streamingContext,
                         LocationStrategies.PreferConsistent(),
-                        ConsumerStrategies.<String, String> Subscribe(topics, kafkaParams));
+                        ConsumerStrategies.<String, String>Subscribe(topics, kafkaParams));
 
         JavaDStream<Tweet> tweets = tweetStream.map(record -> {
             JSONObject tweetObj = (JSONObject) new JSONParser().parse(record.value());
@@ -55,7 +56,7 @@ public class SparkKafkaConnect {
             String username = userObj.get("screen_name").toString();
 
             String location = null;
-            if(userObj.containsKey("location")) {
+            if (userObj.containsKey("location")) {
                 location = userObj.get("location").toString();
             }
 
@@ -68,7 +69,6 @@ public class SparkKafkaConnect {
 
         tweets.foreachRDD(rdd -> {
             javaFunctions(rdd).writerBuilder("twitter_sa", "tweets", mapToRow(Tweet.class)).saveToCassandra();
-            System.out.println("saved to db");
         });
 
 
