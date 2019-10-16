@@ -44,12 +44,18 @@ public class SparkKafkaConnect {
         kafkaParams.put("enable.auto.commit", false);
         Collection<String> topics = Arrays.asList("bill-test");
 
+        /*
+            DStream (Discretized Stream) is a continuous sequence of RDDs representing a containuous stream of data. In this case, it is a stream of kafka ConsumerRecord objects
+        */
         JavaDStream<ConsumerRecord<String, String>> tweetStream =
                 KafkaUtils.createDirectStream(
                         streamingContext,
                         LocationStrategies.PreferConsistent(),
                         ConsumerStrategies.<String, String>Subscribe(topics, kafkaParams));
 
+        /*
+            Transforming consumer records into stream of tweets
+        */
         JavaDStream<Tweet> tweets = tweetStream.map(record -> {
             JSONObject tweetObj = (JSONObject) new JSONParser().parse(record.value());
             JSONObject userObj = (JSONObject) tweetObj.get("user");
@@ -67,10 +73,14 @@ public class SparkKafkaConnect {
             return tweet;
         });
 
+        /*
+            An RDD (or resiliant distributed dataset)
+            represents an immutable (cannot be changed), partitioned collection of elements (elements divided into parts)
+            that can be operated on in parallel (simultaneous operations, each subroblem runs in a seperate thread and results can be combined *PairRDDFunctions).
+        */
         tweets.foreachRDD(rdd -> {
             javaFunctions(rdd).writerBuilder("twitter_sa", "tweets", mapToRow(Tweet.class)).saveToCassandra();
         });
-
 
         streamingContext.start();
         streamingContext.awaitTermination();
