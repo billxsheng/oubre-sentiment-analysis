@@ -69,8 +69,10 @@ public class TwitterKafkaProducer {
                 System.out.printf("Fetched tweet id %d\n", tweet.getId());
                 long key = tweet.getId();
                 String msg = gson.toJson(tweet);
-                System.out.println(msg);
                 ProducerRecord<Long, String> record = new ProducerRecord<>(KafkaConfiguration.TOPIC, key, msg);
+                /*
+                    Sending record
+                */
                 producer.send(record, callback);
             }
         } catch (InterruptedException e) {
