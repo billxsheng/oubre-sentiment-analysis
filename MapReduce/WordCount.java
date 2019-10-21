@@ -1,5 +1,5 @@
 public class WordCount {
-    public static void main(String[] args) {
+    public static class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable> {
 
     }
 }
