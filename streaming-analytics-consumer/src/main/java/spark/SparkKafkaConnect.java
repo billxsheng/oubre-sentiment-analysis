@@ -76,7 +76,7 @@ public class SparkKafkaConnect {
         /*
             An RDD (or resiliant distributed dataset)
             represents an immutable (cannot be changed), partitioned collection of elements (elements divided into parts)
-            that can be operated on in parallel (simultaneous operations, each subroblem runs in a seperate thread and results can be combined *PairRDDFunctions).
+            that can be operated on in parallel (simultaneous operations, each subproblem runs in a seperate thread and results can be combined *PairRDDFunctions).
         */
         tweets.foreachRDD(rdd -> {
             javaFunctions(rdd).writerBuilder("twitter_sa", "tweets", mapToRow(Tweet.class)).saveToCassandra();
