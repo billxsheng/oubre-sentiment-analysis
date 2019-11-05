@@ -1,1 +1,0 @@
-Just a test directory to explore the MapReduce process. 
