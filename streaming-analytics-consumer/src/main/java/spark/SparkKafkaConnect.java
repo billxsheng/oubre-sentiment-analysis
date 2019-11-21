@@ -45,7 +45,7 @@ public class SparkKafkaConnect {
         Collection<String> topics = Arrays.asList("bill-test");
 
         /*
-            DStream (Discretized Stream) is a continuous sequence of RDDs representing a containuous stream of data. In this case, it is a stream of kafka ConsumerRecord objects
+            DStream (Discretized Stream) is a continuous sequence of RDDs representing a continuous stream of data. In this case, it is a stream of kafka ConsumerRecord objects
         */
         JavaDStream<ConsumerRecord<String, String>> tweetStream =
                 KafkaUtils.createDirectStream(
