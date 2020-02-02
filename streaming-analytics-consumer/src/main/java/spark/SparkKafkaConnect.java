@@ -42,7 +42,7 @@ public class SparkKafkaConnect {
         kafkaParams.put("group.id", "use_a_separate_group_id_for_each_stream");
         kafkaParams.put("auto.offset.reset", "latest");
         kafkaParams.put("enable.auto.commit", false);
-        Collection<String> topics = Arrays.asList("bill-test");
+        Collection<String> topics = Arrays.asList("oubre");
 
         /*
             DStream (Discretized Stream) is a continuous sequence of RDDs representing a continuous stream of data. In this case, it is a stream of kafka ConsumerRecord objects
