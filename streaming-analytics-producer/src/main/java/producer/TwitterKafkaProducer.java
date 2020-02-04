@@ -19,8 +19,6 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
 
 public class TwitterKafkaProducer {
     private Client client;
@@ -67,7 +65,6 @@ public class TwitterKafkaProducer {
         try (Producer<Long, String> producer = getProducer()) {
             while (true) {
                 Tweet tweet = gson.fromJson(queue.take(), Tweet.class);
-                System.out.printf("Fetched tweet id %d\n", tweet.getId());
                 long key = tweet.getId();
                 String msg = gson.toJson(tweet);
                 ProducerRecord<Long, String> record = new ProducerRecord<>(KafkaConfiguration.TOPIC, key, msg);

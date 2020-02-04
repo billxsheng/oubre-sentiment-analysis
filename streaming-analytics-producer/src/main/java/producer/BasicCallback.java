@@ -3,13 +3,17 @@ package producer;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class BasicCallback implements Callback {
+    public static final String CALLBACK_LOGGER = "Producer Callback";
+
     public void onCompletion(RecordMetadata metadata, Exception exception) {
         if (exception == null) {
-            System.out.printf("Message with offset %d acknowledged by partition %d\n",
-                    metadata.offset(), metadata.partition());
+            Logger.getLogger(CALLBACK_LOGGER).log(Level.INFO, "Tweet Sent Successfully");
         } else {
-            System.out.println(exception.getMessage());
+            Logger.getLogger(CALLBACK_LOGGER).log(Level.SEVERE, exception.getMessage());
         }
     }
 }
