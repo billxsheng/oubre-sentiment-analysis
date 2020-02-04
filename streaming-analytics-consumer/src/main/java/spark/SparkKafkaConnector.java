@@ -8,6 +8,8 @@ import java.util.Map;
 import static com.datastax.spark.connector.japi.CassandraJavaUtil.javaFunctions;
 import static com.datastax.spark.connector.japi.CassandraJavaUtil.mapToRow;
 
+import com.datastax.spark.connector.SomeColumns;
+import constants.Constants;
 import models.Tweet;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -22,19 +24,12 @@ import org.apache.spark.streaming.kafka010.LocationStrategies;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class SparkKafkaConnect {
+public class SparkKafkaConnector {
 
     public static void connectToTopic() throws InterruptedException {
         SparkConf sparkConf = new SparkConf().setAppName("spark-streaming").setMaster("local[2]").set("spark.executor.memory", "1g");
         sparkConf.set("spark.cassandra.connection.host", "127.0.0.1");
         JavaStreamingContext streamingContext = new JavaStreamingContext(sparkConf, Durations.seconds(1));
-
-        SparkSession spark = SparkSession
-                .builder()
-                .appName("Java Spark SQL basic example")
-                .config("spark.some.config.option", "some-value")
-                .getOrCreate();
-
         Map<String, Object> kafkaParams = new HashMap<>();
         kafkaParams.put("bootstrap.servers", "localhost:9092");
         kafkaParams.put("key.deserializer", StringDeserializer.class);
@@ -79,7 +74,7 @@ public class SparkKafkaConnect {
             that can be operated on in parallel (simultaneous operations, each subproblem runs in a seperate thread and results can be combined *PairRDDFunctions).
         */
         tweets.foreachRDD(rdd -> {
-            javaFunctions(rdd).writerBuilder("twitter_sa", "tweets", mapToRow(Tweet.class)).saveToCassandra();
+            javaFunctions(rdd).writerBuilder(Constants.CASSANDRA_KEYSPACE_NAME, Constants.CASSANDRA_CORE_TWEETS_TABLE, mapToRow(Tweet.class)).saveToCassandra();
         });
 
         streamingContext.start();

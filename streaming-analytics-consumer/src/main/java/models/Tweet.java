@@ -1,28 +1,24 @@
 package models;
 
+import com.datastax.driver.core.utils.UUIDs;
 import com.monkeylearn.MonkeyLearn;
 import com.monkeylearn.MonkeyLearnException;
 import keys.keys;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoder;
-import org.apache.spark.sql.SparkSession;
 import org.json.simple.JSONArray;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class Tweet implements Serializable {
     public static final String TARGET_STRING = "";
 
     private UUID id;
-    private static final AtomicInteger count = new AtomicInteger(0);
     private String name;
     private String text;
     private String location;
-    private String data;
+    private String sentiment;
 
     public UUID getId() {
         return id;
@@ -56,29 +52,28 @@ public class Tweet implements Serializable {
         this.text = text;
     }
 
-    public String getData() {
-        return data;
+    public String getSentiment() {
+        return sentiment;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setSentiment(String sentiment) {
+        this.sentiment = sentiment;
     }
 
     public Tweet(String name, String text, String location) {
         this.name = name;
         this.text = text;
         this.location = location;
-        this.id = UUID.randomUUID();
     }
 
     @Override
     public String toString() {
         return "Tweet{" +
-                "id='" + id + '\'' +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", text='" + text + '\'' +
                 ", location='" + location + '\'' +
-                ", data='" + data + '\'' +
+                ", sentiment='" + sentiment + '\'' +
                 '}';
     }
 
@@ -102,8 +97,8 @@ public class Tweet implements Serializable {
                 .get("label")
                 .toString();
 
-        tweet.setData(data);
-
+        tweet.setSentiment(data);
+        tweet.setId(UUIDs.timeBased());
         return tweet.toString();
     }
 }

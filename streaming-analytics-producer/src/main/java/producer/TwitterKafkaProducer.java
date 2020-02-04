@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 public class TwitterKafkaProducer {
     private Client client;
@@ -71,7 +72,7 @@ public class TwitterKafkaProducer {
                 String msg = gson.toJson(tweet);
                 ProducerRecord<Long, String> record = new ProducerRecord<>(KafkaConfiguration.TOPIC, key, msg);
                 /*
-                    Sending record
+                    Sending record to Kafka topic
                 */
                 producer.send(record, callback);
             }

@@ -1,14 +1,18 @@
-import org.apache.spark.sql.streaming.StreamingQueryException;
-import spark.SparkKafkaConnect;
+import db.CassandraRepository;
+import spark.SparkKafkaConnector;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
 
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        Logger.getLogger("org")
-                .setLevel(Level.OFF);
-        SparkKafkaConnect.connectToTopic();
+        Logger.getLogger("org").setLevel(Level.OFF);
+        Logger.getLogger("akka").setLevel(Level.OFF);
+
+        CassandraRepository connector = new CassandraRepository();
+        connector.initialize("127.0.0.1", null);
+
+        SparkKafkaConnector.connectToTopic();
     }
 }
