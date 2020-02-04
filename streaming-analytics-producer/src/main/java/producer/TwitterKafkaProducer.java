@@ -35,6 +35,7 @@ public class TwitterKafkaProducer {
 
         StatusesFilterEndpoint endpoint = new StatusesFilterEndpoint();
         endpoint.trackTerms(Collections.singletonList(TwitterConfiguration.HASHTAG));
+//        endpoint.locations(Collections.singletonList(TwitterConfiguration.LOCATION_NA));
 
         queue = new LinkedBlockingQueue<>(10000);
 
