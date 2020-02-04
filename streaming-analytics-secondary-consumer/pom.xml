@@ -35,20 +35,15 @@
             <version>2.3.0</version>
         </dependency>
         <dependency>
-            <groupId>com.datastax.dse</groupId>
-            <artifactId>dse-spark-dependencies</artifactId>
-            <version>${dse.version}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.datastax.dse</groupId>
-                    <artifactId>dse-java-driver-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.solr</groupId>
-                    <artifactId>solr-solrj</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-core</artifactId>
+            <version>4.0.0</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.datastax.spark</groupId>
+            <artifactId>spark-cassandra-connector_2.12</artifactId>
+            <version>2.4.2</version>
         </dependency>
     </dependencies>
 
