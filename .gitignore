@@ -16,4 +16,14 @@
 /streaming-analytics-consumer/.settings
 /streaming-analytics-consumer/spark-streaming.iml
 
+/streaming-analytics-secondary-consumer/src/main/java/keys/keys.java
+/streaming-analytics-secondary-consumer/.idea
+/streaming-analytics-secondary-consumer/target
+/streaming-analytics-secondary-consumer/dependency-reduced-pom.xml
+/streaming-analytics-secondary-consumer/streaming-analytics-consumer.iml
+/streaming-analytics-secondary-consumer/.classpath
+/streaming-analytics-secondary-consumer/.project
+/streaming-analytics-secondary-consumer/.settings
+/streaming-analytics-secondary-consumer/streaming-analytics-secondary-consumer.iml
+
 /.idea

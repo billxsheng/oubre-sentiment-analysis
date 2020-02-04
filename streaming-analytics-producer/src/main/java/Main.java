@@ -1,8 +1,11 @@
 import producer.TwitterKafkaProducer;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Streaming Analytics");
+        Logger.getLogger("Core").log(Level.INFO, "Twitter Streaming Analytics!");
         TwitterKafkaProducer producer = new TwitterKafkaProducer();
         producer.run();
     }
