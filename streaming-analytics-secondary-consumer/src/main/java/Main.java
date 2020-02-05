@@ -11,6 +11,7 @@ public class Main {
         CassandraRepository cr = new CassandraRepository();
         cr.initialize("127.0.0.1", null);
         SparkLocationRollup slr = new SparkLocationRollup();
-        slr.runJob();
+        slr.runJob(cr);
+        cr.close();
     }
 }

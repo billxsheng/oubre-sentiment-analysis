@@ -1,6 +1,7 @@
 package db;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import constants.Constants;
 
@@ -26,7 +27,6 @@ public class CassandraRepository {
         session = cluster.connect();
         this.createKeyspace();
         this.createTables();
-        this.close();
     }
 
     private void createKeyspace() {
@@ -47,6 +47,19 @@ public class CassandraRepository {
         Logger.getLogger("Cassandra Repository").log(Level.INFO, tweetsTableQuery);
         session.execute(tweetsTableQuery);
     }
+
+//    private Row getPrevRow(String key) {
+//        StringBuilder tweetsTableSB = new StringBuilder("SELECT * FROM ")
+//                .append(Constants.CASSANDRA_KEYSPACE_NAME)
+//                .append(".")
+//                .append(Constants.CASSANDRA_CORE_LOCATION_TABLE)
+//                .append("WHERE location = ")
+//                .append(key)
+//                .append(";");
+//        final String tweetsTableQuery = tweetsTableSB.toString();
+//        Logger.getLogger("Cassandra Repository").log(Level.INFO, tweetsTableQuery);
+//        return session.execute(tweetsTableQuery).one();
+//    }
 
     public void close() {
         session.close();
