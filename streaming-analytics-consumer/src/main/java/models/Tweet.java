@@ -9,9 +9,11 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class Tweet implements Serializable {
+    public static final String[] SENTIMENTS = new String[]{"NEGATIVE", "NEUTRAL", "POSITIVE"};
     public static final String TARGET_STRING = "";
 
     private UUID id;
@@ -86,18 +88,18 @@ public class Tweet implements Serializable {
         String modelId = "cl_pi3C7JiL";
         String[] mlData = {tweet.getText()};
 
-        JSONArray res = ml.classifiers.classify(modelId, mlData).arrayResult;
-        JSONObject jo = new JSONObject();
-        jo.put("res", res);
-        String data = jo
-                .getJSONArray("res")
-                .getJSONArray(0)
-                .getJSONArray(0)
-                .getJSONObject(0)
-                .get("label")
-                .toString();
+//        JSONArray res = ml.classifiers.classify(modelId, mlData).arrayResult;
+//        JSONObject jo = new JSONObject();
+//        jo.put("res", res);
+//        String data = jo
+//                .getJSONArray("res")
+//                .getJSONArray(0)
+//                .getJSONArray(0)
+//                .getJSONObject(0)
+//                .get("label")
+//                .toString();
 
-        tweet.setSentiment(data);
+        tweet.setSentiment(SENTIMENTS[ThreadLocalRandom.current().nextInt(0, 2)]);
         tweet.setId(UUIDs.timeBased());
         return tweet.toString();
     }

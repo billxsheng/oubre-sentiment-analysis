@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.twitter.hbc.ClientBuilder;
 import com.twitter.hbc.core.Client;
 import com.twitter.hbc.core.Constants;
+import com.twitter.hbc.core.endpoint.Location;
 import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.processor.StringDelimitedProcessor;
 import com.twitter.hbc.httpclient.auth.Authentication;
@@ -19,6 +20,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class TwitterKafkaProducer {
     private Client client;
@@ -34,9 +36,7 @@ public class TwitterKafkaProducer {
                 Keys.ACCESS_SECRET);
 
         StatusesFilterEndpoint endpoint = new StatusesFilterEndpoint();
-        endpoint.trackTerms(Collections.singletonList(TwitterConfiguration.HASHTAG));
-//        endpoint.locations(Collections.singletonList(TwitterConfiguration.LOCATION_NA));
-
+        endpoint.trackTerms(Collections.singletonList(TwitterConfiguration.TERM));
         queue = new LinkedBlockingQueue<>(10000);
 
         client = new ClientBuilder()

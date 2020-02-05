@@ -41,7 +41,7 @@ public class CassandraRepository {
                 .append(Constants.CASSANDRA_KEYSPACE_NAME)
                 .append(".")
                 .append(Constants.CASSANDRA_CORE_LOCATION_TABLE)
-                .append("(location text, positive_count int, neutral_count int, negative_count int, PRIMARY KEY (location))")
+                .append("(location text, count int, PRIMARY KEY (location))")
                 .append(";");
         final String tweetsTableQuery = tweetsTableSB.toString();
         Logger.getLogger("Cassandra Repository").log(Level.INFO, tweetsTableQuery);

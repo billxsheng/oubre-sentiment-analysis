@@ -56,22 +56,32 @@ public class SparkKafkaConnector {
             JSONObject userObj = (JSONObject) tweetObj.get("user");
             String username = userObj.get("screen_name").toString();
 
-            String location = null;
+            String user_location = null;
             if (userObj.containsKey("location")) {
-                location = userObj.get("location").toString();
+                for(String location: Constants.SENTIMENT_LOCATIONS) {
+                    if(userObj.get("location").toString().contains(location)) {
+                        user_location = location;
+                    }
+                }
+
+                if(user_location == null) {
+                    return null;
+                }
+            } else {
+                return null;
             }
 
             String text = tweetObj.get("text").toString();
-            Tweet tweet = new Tweet(username, Tweet.processTweet(text), location);
+            Tweet tweet = new Tweet(username, Tweet.processTweet(text), user_location);
 
             Tweet.analyze(tweet);
             return tweet;
-        });
+        }).filter((record) -> record != null);
 
         /*
-            An RDD (or resiliant distributed dataset)
+            An RDD (or resilient distributed data set)
             represents an immutable (cannot be changed), partitioned collection of elements (elements divided into parts)
-            that can be operated on in parallel (simultaneous operations, each subproblem runs in a seperate thread and results can be combined *PairRDDFunctions).
+            that can be operated on in parallel (simultaneous operations, each sub-problem runs in a separate thread and results can be combined *PairRDDFunctions).
         */
         tweets.foreachRDD(rdd -> {
             javaFunctions(rdd).writerBuilder(Constants.CASSANDRA_KEYSPACE_NAME, Constants.CASSANDRA_CORE_TWEETS_TABLE, mapToRow(Tweet.class)).saveToCassandra();
