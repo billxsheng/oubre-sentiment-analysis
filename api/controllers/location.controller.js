@@ -1,5 +1,5 @@
-const repository = require('../repository/cassandra');
-const utils = require('../utils/stringUtils');
+const repository = require('../repository/cassandra.repository');
+const utils = require('../utils/string.utils');
 const constants = require('../constants/constants');
 
 module.exports.getByLocation = async (location, sentiment) => {
