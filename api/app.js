@@ -1,9 +1,9 @@
 const express = require('express');
 const app = express();
 const PORT = 8080;
-const routes = require('./routes/routes.js');
+const locationRoutes = require('./routes/locationRoutes.js');
 
-app.use('/api/', routes);
+app.use('/api/locations/', locationRoutes);
 
 app.listen(PORT);
 
