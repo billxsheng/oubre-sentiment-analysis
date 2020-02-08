@@ -73,7 +73,7 @@ public class SparkKafkaConnector {
 
             Tweet.analyze(tweet);
             return tweet;
-        }).filter((record) -> record != null);
+        }).filter((record) -> record != null && !record.getTweetText().startsWith("RT"));
 
         /*
             An RDD (or resilient distributed data set)

@@ -3,7 +3,7 @@ const app = express();
 const PORT = 8080;
 const routes = require('./routes/routes.js');
 
-app.use('/', routes);
+app.use('/api/', routes);
 
 app.listen(PORT);
 

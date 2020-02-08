@@ -1,15 +1,16 @@
 const express = require('express');
+const controllers = require('../controllers/controllers');
 
 const app = express.Router();
 
-/** GET table names */
-app.get('/tables', (req, res) => {
-    
+/** GET all sentiment counts for a specific location */
+app.get('/:location', (req, res) => {
+    controllers.getByLocation(req.params.location);
 });
 
-/** GET table data */
-app.get('/tables/:table', (req, res) => {
-    
+/** GET sentiment count for a specific location and sentiment */
+app.get('/location/:sentiment', (req, res) => {
+    controllers.getByLocationAndSentiment(req.params.sentiment)
 });
 
 module.exports = app;

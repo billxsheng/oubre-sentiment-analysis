@@ -29,7 +29,9 @@ public class CassandraRepository {
     }
 
     private void createKeyspace() {
-        StringBuilder createKeyspaceSB = new StringBuilder("CREATE KEYSPACE IF NOT EXISTS ").append(Constants.CASSANDRA_KEYSPACE_NAME).append(" WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 1}").append(";");
+        StringBuilder createKeyspaceSB = new StringBuilder("CREATE KEYSPACE IF NOT EXISTS ")
+                .append(Constants.CASSANDRA_KEYSPACE_NAME)
+                .append(" WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 1};");
         final String createKeyspaceQuery = createKeyspaceSB.toString();
         session.execute(createKeyspaceQuery);
         Logger.getLogger("Cassandra Repository").log(Level.INFO, createKeyspaceQuery);
@@ -40,8 +42,7 @@ public class CassandraRepository {
                 .append(Constants.CASSANDRA_KEYSPACE_NAME)
                 .append(".")
                 .append(Constants.CASSANDRA_CORE_LOCATION_TABLE)
-                .append("(location text, count int, PRIMARY KEY (location))")
-                .append(";");
+                .append("(ls_name text, ls_count int, PRIMARY KEY (ls_name))");
         final String tweetsTableQuery = tweetsTableSB.toString();
         Logger.getLogger("Cassandra Repository").log(Level.INFO, tweetsTableQuery);
         session.execute(tweetsTableQuery);

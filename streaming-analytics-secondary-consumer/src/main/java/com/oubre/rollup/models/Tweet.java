@@ -6,30 +6,30 @@ import java.io.Serializable;
 public class Tweet implements Serializable {
     public static final String TARGET_STRING = "";
 
-    private String location;
-    private String sentiment;
+    private String tweetLocation;
+    private String tweetSentiment;
 
-    public String getLocation() {
-        return location;
+    public String getTweetLocation() {
+        return tweetLocation;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setTweetLocation(String location) {
+        tweetLocation = location;
     }
 
-    public String getSentiment() {
-        return sentiment;
+    public String getTweetSentiment() {
+        return tweetSentiment;
     }
 
-    public void setSentiment(String sentiment) {
-        this.sentiment = sentiment;
+    public void setTweetSentiment(String sentiment) {
+        tweetSentiment = sentiment;
     }
 
     @Override
     public String toString() {
         return "Tweet{" +
-                "location='" + location + '\'' +
-                ", sentiment='" + sentiment + '\'' +
+                "location='" + tweetLocation + '\'' +
+                ", sentiment='" + tweetSentiment + '\'' +
                 '}';
     }
 }

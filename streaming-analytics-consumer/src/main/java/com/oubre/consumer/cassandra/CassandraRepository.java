@@ -30,14 +30,19 @@ public class CassandraRepository {
     }
 
     private void createKeyspace() {
-        StringBuilder createKeyspaceSB = new StringBuilder("CREATE KEYSPACE IF NOT EXISTS " ).append(Constants.CASSANDRA_KEYSPACE_NAME).append(" WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 1}").append(";");
+        StringBuilder createKeyspaceSB = new StringBuilder("CREATE KEYSPACE IF NOT EXISTS " )
+                .append(Constants.CASSANDRA_KEYSPACE_NAME)
+                .append(" WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 1};");
         final String createKeyspaceQuery = createKeyspaceSB.toString();
         session.execute(createKeyspaceQuery);
         Logger.getLogger("Cassandra Repository").log(Level.INFO, createKeyspaceQuery);
     }
 
     private void createTables() {
-        StringBuilder tweetsTableSB = new StringBuilder("CREATE TABLE IF NOT EXISTS " ).append(Constants.CASSANDRA_KEYSPACE_NAME).append(".").append(Constants.CASSANDRA_CORE_TWEETS_TABLE).append("(id timeuuid, sentiment text, location text, name text, text text, PRIMARY KEY (id))").append(";");
+        StringBuilder tweetsTableSB = new StringBuilder("CREATE TABLE IF NOT EXISTS " )
+                .append(Constants.CASSANDRA_KEYSPACE_NAME).append(".")
+                .append(Constants.CASSANDRA_CORE_TWEETS_TABLE)
+                .append("(id timeuuid, tweet_sentiment text, tweet_location text, tweet_username text, tweet_text text, PRIMARY KEY (id));");
         final String tweetsTableQuery = tweetsTableSB.toString();
         Logger.getLogger("Cassandra Repository").log(Level.INFO, tweetsTableQuery);
         session.execute(tweetsTableQuery);

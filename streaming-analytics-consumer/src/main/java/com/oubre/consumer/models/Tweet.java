@@ -15,10 +15,10 @@ public class Tweet implements Serializable {
     public static final String TARGET_STRING = "";
 
     private UUID id;
-    private String name;
-    private String text;
-    private String location;
-    private String sentiment;
+    private String tweetUsername;
+    private String tweetText;
+    private String tweetLocation;
+    private String tweetSentiment;
 
     public UUID getId() {
         return id;
@@ -28,52 +28,52 @@ public class Tweet implements Serializable {
         this.id = id;
     }
 
-    public String getLocation() {
-        return location;
+    public String getTweetLocation() {
+        return tweetLocation;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setTweetLocation(String location) {
+        tweetLocation = location;
     }
 
-    public String getName() {
-        return name;
+    public String getTweetUsername() {
+        return tweetUsername;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTweetUsername(String name) {
+        tweetUsername = name;
     }
 
-    public String getText() {
-        return text;
+    public String getTweetText() {
+        return tweetText;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setTweetText(String text) {
+        tweetText = text;
     }
 
-    public String getSentiment() {
-        return sentiment;
+    public String getTweetSentiment() {
+        return tweetSentiment;
     }
 
-    public void setSentiment(String sentiment) {
-        this.sentiment = sentiment;
+    public void setTweetSentiment(String sentiment) {
+        tweetSentiment = sentiment;
     }
 
     public Tweet(String name, String text, String location) {
-        this.name = name;
-        this.text = text;
-        this.location = location;
+        tweetUsername = name;
+        tweetText = text;
+        tweetLocation = location;
     }
 
     @Override
     public String toString() {
         return "Tweet{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", text='" + text + '\'' +
-                ", location='" + location + '\'' +
-                ", sentiment='" + sentiment + '\'' +
+                ", name='" + tweetUsername + '\'' +
+                ", text='" + tweetText + '\'' +
+                ", location='" + tweetLocation + '\'' +
+                ", sentiment='" + tweetSentiment + '\'' +
                 '}';
     }
 
@@ -84,7 +84,7 @@ public class Tweet implements Serializable {
     public static String analyze(Tweet tweet) throws MonkeyLearnException {
         MonkeyLearn ml = new MonkeyLearn(keys.ML_API_KEY);
         String modelId = "cl_pi3C7JiL";
-        String[] mlData = {tweet.getText()};
+        String[] mlData = {tweet.getTweetText()};
 
 //        JSONArray res = ml.classifiers.classify(modelId, mlData).arrayResult;
 //        JSONObject jo = new JSONObject();
@@ -97,7 +97,7 @@ public class Tweet implements Serializable {
 //                .get("label")
 //                .toString();
 
-        tweet.setSentiment(SENTIMENTS[ThreadLocalRandom.current().nextInt(0, 2)]);
+        tweet.setTweetSentiment(SENTIMENTS[ThreadLocalRandom.current().nextInt(0, 3)]);
         tweet.setId(UUIDs.timeBased());
         return tweet.toString();
     }
