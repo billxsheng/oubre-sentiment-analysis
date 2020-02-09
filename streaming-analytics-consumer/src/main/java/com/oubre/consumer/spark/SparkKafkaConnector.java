@@ -26,7 +26,10 @@ public class SparkKafkaConnector {
     public static void connectToTopic() throws InterruptedException {
         SparkConf sparkConf = new SparkConf().setAppName("com.oubre.consumer.spark-streaming").setMaster("local[2]").set("com.oubre.consumer.spark.executor.memory", "1g");
         sparkConf.set("com.oubre.consumer.spark.cassandra.connection.host", "127.0.0.1");
+
+        /* Entry point for all Spark Streaming applications */
         JavaStreamingContext streamingContext = new JavaStreamingContext(sparkConf, Durations.seconds(1));
+
         Map<String, Object> kafkaParams = new HashMap<>();
         kafkaParams.put("bootstrap.servers", "localhost:9092");
         kafkaParams.put("key.deserializer", StringDeserializer.class);
@@ -37,7 +40,9 @@ public class SparkKafkaConnector {
         Collection<String> topics = Arrays.asList(Constants.CASSANDRA_KEYSPACE_NAME);
 
         /*
-            DStream (Discretized Stream) is a continuous sequence of RDDs representing a continuous stream of data. In this case, it is a stream of kafka ConsumerRecord objects
+            DStream (Discretized Stream) is a continuous sequence (batches) of RDDs
+            representing a continuous stream of data.
+            In this case, it is a stream of Kafka ConsumerRecord objects
         */
         JavaDStream<ConsumerRecord<String, String>> tweetStream =
                 KafkaUtils.createDirectStream(
@@ -45,27 +50,21 @@ public class SparkKafkaConnector {
                         LocationStrategies.PreferConsistent(),
                         ConsumerStrategies.<String, String>Subscribe(topics, kafkaParams));
 
-        /*
-            Transforming consumer records into stream of tweets
-        */
+        /* Transforming consumer records into stream of tweets */
         JavaDStream<Tweet> tweets = tweetStream.map(record -> {
             JSONObject tweetObj = (JSONObject) new JSONParser().parse(record.value());
             JSONObject userObj = (JSONObject) tweetObj.get("user");
             String username = userObj.get("screen_name").toString();
-
-            if(tweetObj.get("is_quote_status").toString().equals("true")) {
-                return null;
-            }
-
             String user_location = null;
-            if (userObj.containsKey("location") && tweetObj.get("in_reply_to_status_id").toString().equals("0")) {
-                for(String location: Constants.SENTIMENT_LOCATIONS) {
-                    if(userObj.get("location").toString().contains(location)) {
+
+            if (userObj.containsKey("location") && tweetObj.get("is_quote_status").toString().equals("false")) {
+                for (String location : Constants.SENTIMENT_LOCATIONS) {
+                    if (userObj.get("location").toString().contains(location)) {
                         user_location = location;
                     }
                 }
 
-                if(user_location == null) {
+                if (user_location == null) {
                     return null;
                 }
             } else {

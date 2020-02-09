@@ -20,13 +20,16 @@ public class SparkLocationRollup {
     public void runJob() {
         Date now = new Date();
         Logger.getLogger("SparkLocationRollup").log(Level.INFO, "Starting Rollup Job from " + now.toString());
-        JavaPairRDD<String, Integer> cassandraRdd = CassandraJavaUtil.javaFunctions(sc)
+        JavaPairRDD<String, Long> cassandraRdd = CassandraJavaUtil.javaFunctions(sc)
                 .cassandraTable(Constants.CASSANDRA_KEYSPACE_NAME, Constants.CASSANDRA_CORE_TWEETS_TABLE, CassandraJavaUtil.mapRowTo(Tweet.class))
                 .select("tweet_location", "tweet_sentiment")
                 .where("id < minTimeUUID(?)", now)
-                .mapToPair((tweet) -> new Tuple2<>(tweet.getTweetLocation() + " " + tweet.getTweetSentiment(), 1))
+                .mapToPair((tweet) -> new Tuple2<>(tweet.getTweetLocation() + " " + tweet.getTweetSentiment(), (long) 1))
                 .reduceByKey((accumulator, n) -> (accumulator + n));
 
-        CassandraJavaUtil.javaFunctions(cassandraRdd).writerBuilder(Constants.CASSANDRA_KEYSPACE_NAME, Constants.CASSANDRA_CORE_LOCATION_TABLE, CassandraJavaUtil.mapTupleToRow(String.class, Integer.class)).saveToCassandra();
+        CassandraJavaUtil
+                .javaFunctions(cassandraRdd)
+                .writerBuilder(Constants.CASSANDRA_KEYSPACE_NAME, Constants.CASSANDRA_CORE_LOCATION_TABLE, CassandraJavaUtil.mapTupleToRow(String.class, Long.class))
+                .saveToCassandra();
     }
 }

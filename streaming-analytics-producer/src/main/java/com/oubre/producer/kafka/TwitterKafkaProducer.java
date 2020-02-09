@@ -67,9 +67,8 @@ public class TwitterKafkaProducer {
                 long key = tweet.getId();
                 String msg = gson.toJson(tweet);
                 ProducerRecord<Long, String> record = new ProducerRecord<>(KafkaConfiguration.TOPIC, key, msg);
-                /*
-                    Sending record to Kafka topic
-                */
+
+                /* Sending record to Kafka topic */
                 producer.send(record, callback);
             }
         } catch (InterruptedException e) {
