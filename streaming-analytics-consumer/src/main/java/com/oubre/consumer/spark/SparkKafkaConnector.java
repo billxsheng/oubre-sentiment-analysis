@@ -53,8 +53,12 @@ public class SparkKafkaConnector {
             JSONObject userObj = (JSONObject) tweetObj.get("user");
             String username = userObj.get("screen_name").toString();
 
+            if(tweetObj.get("is_quote_status").toString().equals("true")) {
+                return null;
+            }
+
             String user_location = null;
-            if (userObj.containsKey("location")) {
+            if (userObj.containsKey("location") && tweetObj.get("in_reply_to_status_id").toString().equals("0")) {
                 for(String location: Constants.SENTIMENT_LOCATIONS) {
                     if(userObj.get("location").toString().contains(location)) {
                         user_location = location;
@@ -71,9 +75,11 @@ public class SparkKafkaConnector {
             String text = tweetObj.get("text").toString();
             Tweet tweet = new Tweet(username, Tweet.processTweet(text), user_location);
 
+            return tweet;
+        }).filter((record) -> record != null && !record.getTweetText().startsWith("RT")).map((tweet -> {
             Tweet.analyze(tweet);
             return tweet;
-        }).filter((record) -> record != null && !record.getTweetText().startsWith("RT"));
+        }));
 
         /*
             An RDD (or resilient distributed data set)

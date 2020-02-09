@@ -1,5 +1,5 @@
 package com.oubre.consumer.keys;
 
 public class keys {
-    public static final String ML_API_KEY = "501a04cdd41f584894892b0da033fa2696122470";
+    public static final String ML_API_KEY = "ab337f00249d0489b2e280ec373e023dc55b143e";
 }

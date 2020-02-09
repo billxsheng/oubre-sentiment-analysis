@@ -4,6 +4,8 @@ import com.datastax.driver.core.utils.UUIDs;
 import com.monkeylearn.MonkeyLearn;
 import com.monkeylearn.MonkeyLearnException;
 import com.oubre.consumer.keys.keys;
+import org.json.JSONObject;
+import org.json.simple.JSONArray;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -86,18 +88,19 @@ public class Tweet implements Serializable {
         String modelId = "cl_pi3C7JiL";
         String[] mlData = {tweet.getTweetText()};
 
-//        JSONArray res = ml.classifiers.classify(modelId, mlData).arrayResult;
-//        JSONObject jo = new JSONObject();
-//        jo.put("res", res);
-//        String data = jo
-//                .getJSONArray("res")
-//                .getJSONArray(0)
-//                .getJSONArray(0)
-//                .getJSONObject(0)
-//                .get("label")
-//                .toString();
+        JSONArray res = ml.classifiers.classify(modelId, mlData).arrayResult;
+        JSONObject jo = new JSONObject();
+        jo.put("res", res);
+        String data = jo
+                .getJSONArray("res")
+                .getJSONArray(0)
+                .getJSONArray(0)
+                .getJSONObject(0)
+                .get("label")
+                .toString();
 
-        tweet.setTweetSentiment(SENTIMENTS[ThreadLocalRandom.current().nextInt(0, 3)]);
+//        tweet.setTweetSentiment(SENTIMENTS[ThreadLocalRandom.current().nextInt(0, 3)]);
+        tweet.setTweetSentiment(data);
         tweet.setId(UUIDs.timeBased());
         return tweet.toString();
     }

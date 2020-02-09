@@ -11,7 +11,7 @@ module.exports.getByLocation = async (location, sentiment) => {
             return Promise.reject(e);
         });
     }
-    let sentimentFormatted = sentiment.toUpperCase().replace(/\"/g, "");
+    let sentimentFormatted = utils.toTitleCase(sentiment);
     if(!constants.sentiments.includes(sentimentFormatted)) {
         return Promise.reject(constants.errors.invalidSentiment);
     }

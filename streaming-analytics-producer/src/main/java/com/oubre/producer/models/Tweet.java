@@ -7,6 +7,9 @@ public class Tweet {
     private String text;
     private String lang;
     private User user;
+    private boolean retweeted;
+    private boolean is_quote_status;
+    private long in_reply_to_status_id;
 
     @SerializedName("retweet_count")
     private int retweetCount;
@@ -14,13 +17,16 @@ public class Tweet {
     @SerializedName("favorite_count")
     private int favoriteCount;
 
-    public Tweet(long id, String text, String lang, User user, int retweetCount, int favoriteCount) {
+    public Tweet(long id, String text, String lang, User user, int retweetCount, int favoriteCount, boolean retweeted, long in_reply_to_status_id, boolean is_quote_status) {
         this.id = id;
         this.text = text;
         this.lang = lang;
         this.user = user;
         this.retweetCount = retweetCount;
         this.favoriteCount = favoriteCount;
+        this.retweeted = retweeted;
+        this.in_reply_to_status_id = in_reply_to_status_id;
+        this.is_quote_status = is_quote_status;
     }
 
     public long getId() {
@@ -78,6 +84,9 @@ public class Tweet {
                 ", text='" + text + '\'' +
                 ", lang='" + lang + '\'' +
                 ", user=" + user +
+                ", retweeted=" + retweeted +
+                ", is_quote_status=" + is_quote_status +
+                ", in_reply_to_status_id=" + in_reply_to_status_id +
                 ", retweetCount=" + retweetCount +
                 ", favoriteCount=" + favoriteCount +
                 '}';
