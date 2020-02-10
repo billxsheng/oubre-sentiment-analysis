@@ -8,7 +8,7 @@ const app = express.Router();
 /** GET all sentiment counts for a specific location */
 app.get('/:location', (req, res, next) => {
     controllers.getByLocation(req.params.location, req.query.sentiment).then((data) => {
-        res.send(data);
+        res.status(200).send(data);
     }).catch((e) => {
         res.status(400).send({
             message: e
