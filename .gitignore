@@ -43,3 +43,4 @@
 /client/yarn-error.log*
 
 /api/node_modules
+scripts
